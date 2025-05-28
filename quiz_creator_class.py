@@ -66,7 +66,7 @@ class QuizCreatorApp(Tk):
             on_focus_out=self.handle_filename_focus_out
         )
 
-                # placeholder for question and focus handling
+        # placeholder for question and focus handling
         self.question_entry = self.create_entry(
             text=self.question_placeholder,
             x_position=130,
@@ -76,6 +76,26 @@ class QuizCreatorApp(Tk):
             on_focus_in=self.handle_question_focus_in,
             on_focus_out=self.handle_question_focus_out
         )
+
+        # Image that represents choices (just a decorative label with image)
+        self.options_image = PhotoImage(file="choices.png").subsample(2, 2)
+        self.options_image_label = Label(self, image=self.options_image)
+        self.options_image_label.place(x=40, y=300)
+
+        # Entries for the 4 possible answer options
+        self.option_entries = []
+        option_positions = [(80, 331), (398, 331), (80, 400), (398, 400)]
+        for position, placeholder in zip(option_positions, self.option_placeholders):
+            entry = self.create_entry(
+                text=placeholder,
+                x_position=position[0],
+                y_position=position[1],
+                width=33,
+                bg_color="white",
+                on_focus_in=self.handle_option_focus_in,
+                on_focus_out=self.handle_option_focus_out
+            )
+            self.option_entries.append(entry)
 
     def handle_filename_focus_in(self, event):
         # Remove placeholder in filename entry when focused
@@ -100,6 +120,20 @@ class QuizCreatorApp(Tk):
         if self.question_entry.get() == "":
             self.question_entry.insert(0, self.question_placeholder)
             self.question_entry.config(fg="gray")
+    
+    def handle_option_focus_in(self, event):
+        # Remove placeholder for any option entry focused
+        if event.widget.get() in self.option_placeholders:
+            event.widget.delete(0, END)
+            event.widget.config(fg="black")
+
+    def handle_option_focus_out(self, event):
+        # Restore placeholder if option entry left empty
+        if event.widget.get() == "":
+            entry_position = self.option_entries.index(event.widget)
+            placeholder_text = self.option_placeholders[entry_position]
+            event.widget.insert(0, placeholder_text)
+            event.widget.config(fg="gray")
 
 # define and instantiate the quiz creator
 app = QuizCreatorApp()
