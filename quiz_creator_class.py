@@ -97,6 +97,17 @@ class QuizCreatorApp(Tk):
             )
             self.option_entries.append(entry)
 
+                # Entry for the correct answer with its placeholder and handlers
+        self.correct_answer_entry = self.create_entry(
+            text=self.correct_answer_placeholder,
+            x_position=550,
+            y_position=270,
+            width=17,
+            bg_color="#fff7e6",
+            on_focus_in=self.handle_correct_answer_focus_in,
+            on_focus_out=self.handle_correct_answer_focus_out
+        )
+
     def handle_filename_focus_in(self, event):
         # Remove placeholder in filename entry when focused
         if self.filename_entry.get() == self.filename_placeholder:
@@ -134,6 +145,18 @@ class QuizCreatorApp(Tk):
             placeholder_text = self.option_placeholders[entry_position]
             event.widget.insert(0, placeholder_text)
             event.widget.config(fg="gray")
+
+    def handle_correct_answer_focus_in(self, event):
+        # Remove placeholder in correct answer entry when focused
+        if self.correct_answer_entry.get() == self.correct_answer_placeholder:
+            self.correct_answer_entry.delete(0, END)
+            self.correct_answer_entry.config(fg="black")
+
+    def handle_correct_answer_focus_out(self, event):
+        # Restore placeholder if empty
+        if self.correct_answer_entry.get() == "":
+            self.correct_answer_entry.insert(0, self.correct_answer_placeholder)
+            self.correct_answer_entry.config(fg="gray")
 
 # define and instantiate the quiz creator
 app = QuizCreatorApp()
