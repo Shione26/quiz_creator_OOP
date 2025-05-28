@@ -203,7 +203,3 @@ class QuizCreatorApp(Tk):
     def exit_app(self):
         if messagebox.askyesno("Notice", "Are you sure you want to exit?"):
             self.destroy()
-
-# define and instantiate the quiz creator
-app = QuizCreatorApp()
-app.mainloop()
