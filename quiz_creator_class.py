@@ -77,7 +77,7 @@ class QuizCreatorApp(Tk):
             on_focus_out=self.handle_question_focus_out
         )
 
-        # Image that represents choices (just a decorative label with image)
+        # options image
         self.options_image = PhotoImage(file="choices.png").subsample(2, 2)
         self.options_image_label = Label(self, image=self.options_image)
         self.options_image_label.place(x=40, y=300)
@@ -97,7 +97,7 @@ class QuizCreatorApp(Tk):
             )
             self.option_entries.append(entry)
 
-                # Entry for the correct answer with its placeholder and handlers
+        # Entry for the correct answer with its placeholder and handlers
         self.correct_answer_entry = self.create_entry(
             text=self.correct_answer_placeholder,
             x_position=550,
@@ -107,6 +107,12 @@ class QuizCreatorApp(Tk):
             on_focus_in=self.handle_correct_answer_focus_in,
             on_focus_out=self.handle_correct_answer_focus_out
         )
+
+        self.submit_button = Button(self, text="Submit", font=("Montserrat", 10), command=self.save_to_file)
+        self.submit_button.place(x=360, y=460)
+
+        self.exit_button = Button(self, text="Exit", font=("Montserrat", 10), command=self.exit_app)
+        self.exit_button.place(x=320, y=460)
 
     def handle_filename_focus_in(self, event):
         # Remove placeholder in filename entry when focused
@@ -157,6 +163,46 @@ class QuizCreatorApp(Tk):
         if self.correct_answer_entry.get() == "":
             self.correct_answer_entry.insert(0, self.correct_answer_placeholder)
             self.correct_answer_entry.config(fg="gray")
+
+    def save_to_file(self):
+        quiz_filename = self.filename_entry.get().strip()
+        if quiz_filename == self.filename_placeholder or not quiz_filename:
+            messagebox.showwarning("Missing Filename", "Please enter a title")
+            return
+
+        correct_answer = self.correct_answer_entry.get().strip().upper()
+        if not correct_answer or correct_answer == self.correct_answer_placeholder:
+            messagebox.showerror("Invalid Input", "Please enter the correct answer")
+            return
+
+        with open(f"{quiz_filename}.txt", "a") as file:
+            file.write("Question: " + self.question_entry.get() + "\n")
+            file.write("a. " + self.option_entries[0].get() + "\n")
+            file.write("b. " + self.option_entries[1].get() + "\n")
+            file.write("c. " + self.option_entries[2].get() + "\n")
+            file.write("d. " + self.option_entries[3].get() + "\n")
+            file.write("Correct answer: " + correct_answer + "\n\n")
+
+        messagebox.showinfo("Notice", "Item saved successfully!")
+        self.clear_all_fields()
+
+    def clear_all_fields(self):
+        self.question_entry.delete(0, END)
+        self.question_entry.insert(0, self.question_placeholder)
+        self.question_entry.config(fg="gray")
+
+        for position, entry in enumerate(self.option_entries):
+            entry.delete(0, END)
+            entry.insert(0, self.option_placeholders[position])
+            entry.config(fg="gray")
+
+        self.correct_answer_entry.delete(0, END)
+        self.correct_answer_entry.insert(0, self.correct_answer_placeholder)
+        self.correct_answer_entry.config(fg="gray")
+
+    def exit_app(self):
+        if messagebox.askyesno("Notice", "Are you sure you want to exit?"):
+            self.destroy()
 
 # define and instantiate the quiz creator
 app = QuizCreatorApp()
