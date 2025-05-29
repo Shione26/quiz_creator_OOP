@@ -22,7 +22,27 @@ class QuizGameApp:
         self.window.mainloop()
 
     def read_quiz_file(self):
-        pass
+        with open(self.filename, "r") as file:
+            lines = [line.strip() for line in file if line.strip() != ""]
+
+        for index in range(0, len(lines), 6):
+            question = lines[index].replace("Question: ", "")
+            option_a = lines[index + 1].replace("a. ", "")
+            option_b = lines[index + 2].replace("b. ", "")
+            option_c = lines[index + 3].replace("c. ", "")
+            option_d = lines[index + 4].replace("d. ", "")
+            correct_letter = lines[index + 5].replace("Correct answer:", "").strip().upper()
+
+            choices = [option_a, option_b, option_c, option_d]
+            correct_answer = choices[["A", "B", "C", "D"].index(correct_letter)]
+
+            self.quiz_data.append({
+                "question": question,
+                "options": choices,
+                "answer": correct_answer
+            })
+
+        self.shuffled_quiz = random.sample(self.quiz_data, len(self.quiz_data))
 
     def setup_ui(self):
         self.question_label = Label(
